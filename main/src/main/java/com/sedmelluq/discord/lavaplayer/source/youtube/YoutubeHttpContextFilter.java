@@ -12,6 +12,8 @@ import org.apache.http.impl.client.BasicCookieStore;
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.COMMON;
 
 public class YoutubeHttpContextFilter extends BaseYoutubeHttpContextFilter {
+  public static final String PBJ_PARAMETER = "&pbj=1";
+
   private static final String ATTRIBUTE_RESET_RETRY = "isResetRetry";
 
   @Override
@@ -38,10 +40,9 @@ public class YoutubeHttpContextFilter extends BaseYoutubeHttpContextFilter {
       context.removeAttribute(ATTRIBUTE_RESET_RETRY);
     }
 
-    request.setHeader("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36");
-    request.setHeader("x-youtube-client-name", "1");
-    request.setHeader("x-youtube-client-version", "2.20210304.08.01");
-    request.setHeader("accept-language", "en");
+    if (isPbjRequest(request)) {
+      addPbjHeaders(request);
+    }
 
     super.onRequest(context, request, isRepetition);
   }
@@ -66,5 +67,21 @@ public class YoutubeHttpContextFilter extends BaseYoutubeHttpContextFilter {
     }
 
     return false;
+  }
+
+  protected boolean isPbjRequest(HttpUriRequest request) {
+    String rawQuery = request.getURI().getRawQuery();
+    return rawQuery != null && rawQuery.contains(PBJ_PARAMETER);
+  }
+
+  protected void addPbjHeaders(HttpUriRequest request) {
+    request.setHeader("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36");
+    request.setHeader("x-youtube-client-name", "1");
+    request.setHeader("x-youtube-client-version", "2.20210304.08.01");
+    request.setHeader("x-youtube-page-cl", "276511266");
+    request.setHeader("x-youtube-page-label", "youtube.ytfe.desktop_20191024_3_RC0");
+    request.setHeader("x-youtube-utc-offset", "0");
+    request.setHeader("x-youtube-variants-checksum", "7a1198276cf2b23fc8321fac72aa876b");
+    request.setHeader("accept-language", "en");
   }
 }
