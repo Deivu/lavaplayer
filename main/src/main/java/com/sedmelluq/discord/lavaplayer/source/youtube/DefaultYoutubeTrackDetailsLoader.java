@@ -1,13 +1,13 @@
 package com.sedmelluq.discord.lavaplayer.source.youtube;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import com.sedmelluq.discord.lavaplayer.tools.DataFormatTools;
 import com.sedmelluq.discord.lavaplayer.tools.ExceptionTools;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
-import java.io.IOException;
-import java.net.URLEncoder;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -298,13 +298,25 @@ public class DefaultYoutubeTrackDetailsLoader implements YoutubeTrackDetailsLoad
     }
   }
 
-  protected static class CachedPlayerScript {
-    public final String playerScriptUrl;
-    public final long timestamp;
+  public CachedPlayerScript getCachedPlayerScript() {
+    return cachedPlayerScript;
+  }
+
+  public void clearCache() {
+    cachedPlayerScript = null;
+  }
+
+  public static class CachedPlayerScript {
+    private final String playerScriptUrl;
+    private final long timestamp;
 
     public CachedPlayerScript(String playerScriptUrl, long timestamp) {
       this.playerScriptUrl = playerScriptUrl;
       this.timestamp = timestamp;
+    }
+
+    public String getPlayerScriptUrl() {
+      return playerScriptUrl;
     }
   }
 }
