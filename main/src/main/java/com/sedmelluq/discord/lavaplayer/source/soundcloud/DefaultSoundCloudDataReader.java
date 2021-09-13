@@ -69,8 +69,8 @@ public class DefaultSoundCloudDataReader implements SoundCloudDataReader {
   }
 
   @Override
-  public JsonBrowser findPlaylistData(JsonBrowser rootData) {
-    return findEntryOfKind(rootData, "playlist");
+  public JsonBrowser findPlaylistData(JsonBrowser rootData, String kind) {
+    return findEntryOfKind(rootData, kind);
   }
 
   @Override
@@ -89,10 +89,8 @@ public class DefaultSoundCloudDataReader implements SoundCloudDataReader {
   }
 
   protected JsonBrowser findEntryOfKind(JsonBrowser data, String kind) {
-    for (JsonBrowser value : data.values()) {
-      if (value.isMap() && kind.equals(value.get("data").get("kind").safeText())) {
-        return value.get("data");
-      }
+    if (data.isMap() && kind.equals(data.get("kind").text())) {
+      return data;
     }
 
     return null;
